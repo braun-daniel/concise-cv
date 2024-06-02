@@ -1,13 +1,29 @@
 % Identification
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{cv}[2024/05/01 Daniel Braun - Concise CV LaTeX class]
+\RequirePackage{keyval}
+\RequirePackage{kvoptions}
 
-% Base class
-\LoadClass[10pt]{article}
+% Package options
+\SetupKeyvalOptions{
+    family=my,
+    prefix=my@,
+}
+
+%% Declare options
+\makeatletter
+\DeclareStringOption[10pt]{fontsize}
+\DeclareStringOption[0.5in]{margin}
+\DeclareStringOption[0pt]{spacing}
+\DeclareStringOption[00423b]{primarycolor}
+\DeclareVoidOption{a4paper}{\LoadClass[\my@fontsize, a4paper]{article}}
+\DeclareVoidOption{letterpaper}{\LoadClass[\my@fontsize, letterpaper]{article}}
+
+%% Process options
+\ProcessKeyvalOptions*
 
 % Required packages
+\RequirePackage[margin=\my@margin]{geometry} % Document margins
 \RequirePackage[table]{xcolor} % Colors
-\RequirePackage[left=0.75in,top=0.3in,right=0.75in,bottom=0.6in]{geometry} % Document margins
 \RequirePackage{fontspec} % Font selection
 \RequirePackage{tcolorbox} % Colored boxes
 \RequirePackage{graphicx} % Images
@@ -26,12 +42,11 @@
 \RequirePackage{pagecolor} % Color the background
 \RequirePackage{amssymb} % Mathematical symbols
 
+% Set the background and text color.
 % Colors
-\definecolor{PRIMARY}{RGB}{0,59,102} % For individual theming.
+\definecolor{PRIMARY}{HTML}{\my@primarycolor}
 \definecolor{TEXT}{RGB}{0,0,0} % For the main text section.
 \definecolor{BACKGROUND}{RGB}{255,255,255} % For the background color.
-
-% Set the background and text color.
 \AtBeginDocument{
   \pagecolor{BACKGROUND}
   \color{TEXT}
@@ -58,20 +73,17 @@
 \newcommand*{\mylinkedinaccount}[1]{\def\@linkedinaccount{#1}}
 \newcommand*{\mygithubaccount}[1]{\def\@githubaccount{#1}}
 \newcommand*{\myprofile}[1]{\def\@profile{#1}}
+\newcommand*{\myspacing}[1]{\setlength{\parskip}{#1}}
 
-% Commands (Header)
-% \newcommand{\myseparator}{
-%   \space\space\textbf{|}\space\space
-% }
+% Design (Header)
 \newcommand{\profilepicture}[2]{
   \begin{tikzpicture}[baseline=(current bounding box.north)]
     \node[rounded corners=5pt, draw=none, inner sep=0pt, clip] at (0,0) {\includegraphics[width=#2]{#1}};
   \end{tikzpicture}
 }
-
 \newcommand{\header}{
   \begin{minipage}{.2\linewidth}
-    \profilepicture{images/profilepicture.png}{3cm}
+    \profilepicture{assets/images/profilepicture.png}{3cm}
   \end{minipage}
   \begin{minipage}[3cm]{.35\linewidth}
     \raggedright
@@ -111,8 +123,8 @@
 
 % Design (Sections)
 \newcommand{\largehrulefill}[1][0.4pt]{\leavevmode\leaders\hrule height #1\hfill\kern0pt}
-\setlength{\parskip}{0pt}%
-\setlength{\parindent}{0pt}%
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{\my@spacing}
 \titleformat{\section}
   {\LARGE\bfseries\scshape\color{PRIMARY}} % Large (\large), small capitals (\scshape), bold (\bfseries)
   {} % Section number
