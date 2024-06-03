@@ -1,8 +1,14 @@
 # Concise CV
+
+## Introduction
 This is a CV template that aims to be concise and to the point. It provides `LaTeX` commands to structure your CV, help you write it and make it easy to read. It can be easily themed and customized to fit your personal style.
 
-![Example CV Page 1](./assets/images/cv_blue_1.png)
-![Example CV Page 1](./assets/images/cv_blue_2.png)
+## Examples
+### Header with picture and profile
+<img src="./assets/images/cv_blue.png" alt="Header with picture and profile." style="width:400px;"/>
+
+### Minimal header
+<img src="./assets/images/cv_blue_header_min.png" alt="Minimal header." style="width:400px;"/>
 
 ## Installing / Getting started
 You can use the provided development container to simplify the setup process. For more information, check out the [development container documentation](https://code.visualstudio.com/docs/remote/containers).
@@ -13,8 +19,9 @@ Use the provided example as a base to build your own CV and follow these steps:
 ### Document metadata
 Fill in the document metadata. This will not show up in the document itself but is used to generate the PDF.
 
-### Personal information
-Fill in the ```\myXXYZ``` commands with your personal information. This will show up in the document header.
+### Personal information (header)
+Fill in the ```\myXYZ``` commands with your personal information. This will show up in the document header.
+There are two variants for the header: one with a profile picture and a profile (```\header```), one without (```\headermin```). If you aim for a one-page CV and need the space, you should use the variant without the profile picture and profile.
 
 ### Work experience
 First section should be your work experience in reverse chronological order. Use the ```\whatwherewhen``` command to fill in the details for each position.

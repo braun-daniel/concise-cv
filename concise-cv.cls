@@ -75,17 +75,40 @@
 \newcommand*{\myprofile}[1]{\def\@profile{#1}}
 \newcommand*{\myspacing}[1]{\setlength{\parskip}{#1}}
 
-% Design (Header)
+% Design (Header - Minimal)
+\newcommand{\headermin}{
+  \begin{minipage}{.3\linewidth}
+    \raggedright
+    \color{PRIMARY}
+    {\small\@address} \\
+    {\small\@mobile} \\
+    {\small\href{mailto://\@mail}{\@mail}} \\
+  \end{minipage}
+  \begin{minipage}{.4\linewidth}
+    \centering
+    \color{PRIMARY}
+    {\LARGE\scshape\bfseries\@firstname\space\@lastname}
+  \end{minipage}
+  \begin{minipage}{.3\linewidth}
+    \raggedleft
+    \color{PRIMARY}
+    {\small\faLinkedin\texttt{\href{https://linkedin.com\@linkedinaccount}{\@linkedinaccount}}} \\
+    {\small\faGithub\texttt{\href{https://github.com\@githubaccount}{\@githubaccount}}}
+  \end{minipage}
+}
+
+% Design (Header - Standard)
 \newcommand{\profilepicture}[2]{
   \begin{tikzpicture}[baseline=(current bounding box.north)]
     \node[rounded corners=5pt, draw=none, inner sep=0pt, clip] at (0,0) {\includegraphics[width=#2]{#1}};
   \end{tikzpicture}
 }
 \newcommand{\header}{
-  \begin{minipage}{.2\linewidth}
+  \begin{minipage}{.15\linewidth}
     \profilepicture{assets/images/profilepicture.png}{3cm}
   \end{minipage}
-  \begin{minipage}[3cm]{.35\linewidth}
+  \hspace{1em}
+  \begin{minipage}[3cm]{.30\linewidth}
     \raggedright
     \color{PRIMARY}
     {\LARGE\scshape\bfseries\@firstname\space\@lastname}\vspace{.5em} \\
@@ -96,7 +119,7 @@
     {\faGithub\texttt{\href{https://github.com\@githubaccount}{\@githubaccount}}}
   \end{minipage}
   \hfill
-  \begin{minipage}{.4\linewidth}
+  \begin{minipage}{.45\linewidth}
     \vspace{0pt}
     \tcbset{
       myboxstyle/.style={
@@ -118,7 +141,6 @@
       {{\scshape\textbf{Profile }}\textbf{|}\space{\small\@profile}}
     \end{tcolorbox}
   \end{minipage}
-  \\
 }
 
 % Design (Sections)
@@ -126,18 +148,19 @@
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{\my@spacing}
 \titleformat{\section}
-  {\LARGE\bfseries\scshape\color{PRIMARY}} % Large (\large), small capitals (\scshape), bold (\bfseries)
+  {\LARGE\scshape\color{PRIMARY}} % Large (\large), small capitals (\scshape), bold (\bfseries)
   {} % Section number
   {0em} % Space between the section number and title
-  {} % Horizontal line before the title
-  [\vspace{-1em}\rule{\textwidth}{1pt}]
+  {} % Before
+  [\vspace{-1.1em}\rule{\textwidth}{1pt}]
 \titleformat{\subsection}
-  {\bfseries\scshape\color{PRIMARY}} % Large (\Large), small capitals (\scshape), left aligned (\raggedright)
-  {}{0em} % Separator
-  {} % Before code
+  {\bfseries\color{PRIMARY}} % Large (\Large), small capitals (\scshape), left aligned (\raggedright)
+  {} % Section number
+  {0em} % Space between the section number and title
+  {} % Before
 
-\titlespacing*{\section}{0em}{1em}{.5em}
-\titlespacing*{\subsection}{0em}{1em}{0em}
+\titlespacing*{\section}{0em}{.5em}{0em}
+\titlespacing*{\subsection}{0em}{.5em}{0em}
 
 % Design (Enum - cvEnum)
 \newlist{cvEnum}{itemize}{1}
