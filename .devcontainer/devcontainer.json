@@ -17,7 +17,9 @@
                 "latex-workshop.latex.recipes": [
                     {
                         "name": "xelatex",
-                        "tools": ["xelatex"]
+                        "tools": [
+                            "xelatex"
+                        ]
                     }
                 ],
                 "latex-workshop.latex.tools": [
