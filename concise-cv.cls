@@ -5,16 +5,22 @@
 
 % Package options
 \SetupKeyvalOptions{
-    family=my,
-    prefix=my@,
+  family=my,
+  prefix=my@,
 }
 
 %% Declare options
 \makeatletter
 \DeclareStringOption[10pt]{fontsize}
-\DeclareStringOption[0.5in]{margin}
+\DeclareStringOption[0.5in]{pagemargin}
 \DeclareStringOption[0pt]{spacing}
-\DeclareStringOption[00423b]{primarycolor}
+\DeclareStringOption[1DB954]{primarycolor}
+\DeclareStringOption[FFFFFF]{backgroundcolor}
+\DeclareStringOption[000000]{textprimarycolor}
+\DeclareStringOption[909090]{textsecondarycolor}
+\DeclareStringOption[1cm]{timelineindent}
+\DeclareStringOption[.25cm]{smallskip}
+\DeclareStringOption[.5cm]{bigskip}
 \DeclareVoidOption{a4paper}{\LoadClass[\my@fontsize, a4paper]{article}}
 \DeclareVoidOption{letterpaper}{\LoadClass[\my@fontsize, letterpaper]{article}}
 
@@ -22,9 +28,10 @@
 \ProcessKeyvalOptions*
 
 % Required packages
-\RequirePackage[margin=\my@margin]{geometry} % Document margins
+\RequirePackage[margin=\my@pagemargin]{geometry} % Document margins
 \RequirePackage[table]{xcolor} % Colors
-\RequirePackage{fontspec} % Font selection
+\RequirePackage[sfdefault,lf]{carlito}
+\RequirePackage{fontspec}
 \RequirePackage{tcolorbox} % Colored boxes
 \RequirePackage{graphicx} % Images
 \RequirePackage{fontawesome5} % Icons
@@ -41,19 +48,23 @@
 \RequirePackage{multirow} % Create tabular cells spanning multiple rows
 \RequirePackage{pagecolor} % Color the background
 \RequirePackage{amssymb} % Mathematical symbols
+\RequirePackage{changepage} % For adjusting width (indenting)
+\RequirePackage{lipsum} % Generate "Lorem Ipsum" placeholder text
+
+\usetikzlibrary{positioning,chains,matrix,calc}
 
 % Set the background and text color.
 % Colors
 \definecolor{PRIMARY}{HTML}{\my@primarycolor}
-\definecolor{TEXT}{RGB}{0,0,0} % For the main text section.
-\definecolor{BACKGROUND}{RGB}{255,255,255} % For the background color.
+\definecolor{TEXTPRIMARY}{HTML}{\my@textprimarycolor}
+\definecolor{TEXTSECONDARY}{HTML}{\my@textsecondarycolor}
+\definecolor{BACKGROUND}{HTML}{\my@backgroundcolor}
+
 \AtBeginDocument{
   \pagecolor{BACKGROUND}
-  \color{TEXT}
+  \color{TEXTPRIMARY}
 }
 
-% Font
-\setmainfont{TeX Gyre Heros}
 
 % Page style. Empty removes page numbers.
 \pagestyle{empty}
@@ -68,162 +79,119 @@
 \newcommand*{\myname}[2]{\def\@firstname{#1}\def\@lastname{#2}}
 \newcommand*{\myaddress}[1]{\def\@address{#1}}
 \newcommand*{\mymobile}[1]{\def\@mobile{#1}}
-\newcommand*{\myposition}[1]{\def\@position{#1}}
 \newcommand*{\mymail}[1]{\def\@mail{#1}}
 \newcommand*{\mylinkedinaccount}[1]{\def\@linkedinaccount{#1}}
 \newcommand*{\mygithubaccount}[1]{\def\@githubaccount{#1}}
-\newcommand*{\myprofile}[1]{\def\@profile{#1}}
-\newcommand*{\myspacing}[1]{\setlength{\parskip}{#1}}
+\newcommand*{\myprofilepicture}[1]{\def\@profilepicture{#1}}
 
-% Design (Header - Minimal)
-\newcommand{\headermin}{
-  \begin{minipage}{.3\linewidth}
-    \raggedright
-    \color{PRIMARY}
-    {\small\@address} \\
-    {\small\@mobile} \\
-    {\small\href{mailto://\@mail}{\@mail}} \\
-  \end{minipage}
-  \begin{minipage}{.4\linewidth}
-    \centering
-    \color{PRIMARY}
-    {\LARGE\scshape\bfseries\@firstname\space\@lastname}
-  \end{minipage}
-  \begin{minipage}{.3\linewidth}
-    \raggedleft
-    \color{PRIMARY}
-    {\small\faLinkedin\texttt{\href{https://linkedin.com\@linkedinaccount}{\@linkedinaccount}}} \\
-    {\small\faGithub\texttt{\href{https://github.com\@githubaccount}{\@githubaccount}}}
-  \end{minipage}
-}
-
-% Design (Header - Standard)
-\newcommand{\profilepicture}[2]{
-  \begin{tikzpicture}[baseline=(current bounding box.north)]
-    \node[rounded corners=5pt, draw=none, inner sep=0pt, clip] at (0,0) {\includegraphics[width=#2]{#1}};
-  \end{tikzpicture}
-}
-\newcommand{\header}{
-  \begin{minipage}{.15\linewidth}
-    \profilepicture{assets/images/profilepicture.png}{3cm}
-  \end{minipage}
-  \hspace{1em}
-  \begin{minipage}[3cm]{.30\linewidth}
-    \raggedright
-    \color{PRIMARY}
-    {\LARGE\scshape\bfseries\@firstname\space\@lastname}\vspace{.5em} \\
-    {\@address} \\
-    {\@mobile} \\
-    {\href{mailto://\@mail}{\@mail}} \\
-    {\faLinkedin\texttt{\href{https://linkedin.com\@linkedinaccount}{\@linkedinaccount}}} \\
-    {\faGithub\texttt{\href{https://github.com\@githubaccount}{\@githubaccount}}}
-  \end{minipage}
-  \hfill
-  \begin{minipage}{.45\linewidth}
-    \vspace{0pt}
-    \tcbset{
-      myboxstyle/.style={
-          colback=PRIMARY,        % Background color
-          sharp corners,          % Remove if you want perfectly round corners
-          rounded corners,        % Apply rounded corners
-          boxrule=0pt,            % Border thickness
-          arc=5pt,                % Radius of rounded corners
-          width=\linewidth,       % Box width
-          boxsep=5pt,             % Separation between box and content
-          left=5pt,               % Internal left padding
-          right=5pt,              % Internal right padding
-          top=5pt,                % Internal top padding
-          bottom=5pt              % Internal bottom padding
-      }
-    }
-    \begin{tcolorbox}[myboxstyle]
-      \color{white}
-      {{\scshape\textbf{Profile }}\textbf{|}\space{\small\@profile}}
-    \end{tcolorbox}
-  \end{minipage}
-}
-
-% Design (Sections)
-\newcommand{\largehrulefill}[1][0.4pt]{\leavevmode\leaders\hrule height #1\hfill\kern0pt}
-\setlength{\parindent}{0pt}
-\setlength{\parskip}{\my@spacing}
-\titleformat{\section}
-  {\LARGE\scshape\color{PRIMARY}} % Large (\large), small capitals (\scshape), bold (\bfseries)
-  {} % Section number
-  {0em} % Space between the section number and title
-  {} % Before
-  [\vspace{-1.1em}\rule{\textwidth}{1pt}]
-\titleformat{\subsection}
-  {\bfseries\color{PRIMARY}} % Large (\Large), small capitals (\scshape), left aligned (\raggedright)
-  {} % Section number
-  {0em} % Space between the section number and title
-  {} % Before
-
-\titlespacing*{\section}{0em}{.5em}{0em}
-\titlespacing*{\subsection}{0em}{.5em}{0em}
-
-% Design (Enum - cvEnum)
+% % Design (Enum - cvEnum)
 \newlist{cvEnum}{itemize}{1}
 \setlist[cvEnum, 1]
 {
   nosep,
-  label=\textcolor{PRIMARY}{\raisebox{0.25ex}{\tiny$\blacksquare$}},
+  label=\textcolor{PRIMARY}{\tikz[baseline=-.5ex]{\fill[PRIMARY] circle (2pt);}},
   leftmargin=10pt,
   rightmargin=0pt,
-  itemsep=2pt,
+  itemsep=0pt,
 }
 \setlistdepth{1}
 
-% Command (What/Where/When)
-\newcommand{\whatwherewhen}[3]{
-  \subsection*{
-    {\makebox[0pt][l]{#1}\makebox[\textwidth][c]{\begin{varwidth}{0.6\textwidth}\centering#2\end{varwidth}}\makebox[0pt][r]{#3}}
-  }
-  \vspace{-1em}
+% tikz styles
+\tikzset{
+  start chain=going below, % Start a chain going below
+  node distance=.25em,
+  % Header
+  HEADERPRIMARY/.style={font=\Huge\bfseries\color{PRIMARY}, text width=\dimexpr\textwidth-\my@timelineindent\relax, align=justify, inner sep=0pt, outer sep=0pt, on chain},
+  HEADERLINESECONDARY/.style={font=\small\color{TEXTSECONDARY}, text width=\dimexpr\textwidth-\my@timelineindent\relax, align=justify, inner sep=0pt, outer sep=0pt, on chain},
+  PROFILEPICTURE/.style={rounded corners=5pt, draw=none, inner sep=0pt, outer sep=0pt, clip},
+  % Text
+  SECTION/.style={font=\bfseries\Large\color{PRIMARY}, text width=\dimexpr\textwidth-\my@timelineindent\relax, align=justify, inner sep=0pt, outer sep=0pt, on chain, yshift=-\my@bigskip},
+  SUBSECTION/.style={font=\bfseries\large\color{PRIMARY}, text width=\dimexpr\textwidth-\my@timelineindent\relax, align=justify, inner sep=0pt, outer sep=0pt, on chain, yshift=-\my@smallskip},
+  WHEN/.style={font=\normalfont\bfseries\color{TEXTSECONDARY}, text width=\dimexpr\textwidth-\my@timelineindent\relax, align=justify, inner sep=0pt, outer sep=0pt, on chain},
+  PROFILE/.style={font=\normalfont\color{TEXTPRIMARY}, text width=\dimexpr\textwidth-\my@timelineindent\relax, align=justify, inner sep=0pt, outer sep=0pt, on chain, yshift=-\my@smallskip},
+  ACCOMPLISHMENT/.style={font=\normalfont\color{TEXTPRIMARY}, text width=\dimexpr\textwidth-\my@timelineindent\relax, align=justify, inner sep=0pt, outer sep=0pt, on chain},
+  % Visuals
+  CIRCLE/.style={
+      circle,
+      draw=TEXTSECONDARY,
+      fill=BACKGROUND,
+      line width=2pt,
+      inner sep=0pt,
+      minimum size=0.15cm,
+      anchor=nord,
+    },
+  LINE/.style={
+      draw=TEXTSECONDARY,
+      line width=2pt,
+      line cap=round,
+    },
+  ICON/.style={
+      font=\large\color{PRIMARY},
+      inner sep=0pt,
+      outer sep=0pt,
+      anchor=west,
+      xshift=-\my@timelineindent,
+    },
 }
 
-% Command (Accomplishment)
-\newcommand{\accomplishment}[2]{ 
-  % Power verb, method/skill, result
-  % Accomplished [X], as measured by [Y], by doing [Z]
-  \textbf{#1} #2
+% Environment (cv)
+\newenvironment{cv}
+{\noindent\begin{tikzpicture}}
+    {\end{tikzpicture}}
+
+% Command (jobentry)
+\newcommand{\jobentry}[4]{%
+  \node[SUBSECTION] (jobentrysubsec#1) {#2};
+  \node[CIRCLE] (jobentrycircle#1) [at={(secicon.center |- jobentrysubsec#1.west)}, anchor=center] {};
+  \node[WHEN] {#3};
+  \node[ACCOMPLISHMENT] (jobentryaccomplishment#1) {#4};
+  \draw[LINE] (jobentrycircle#1.south) -- (jobentrycircle#1.south |- jobentryaccomplishment#1.south);
 }
 
+% Command (educationentry)
+\newcommand{\educationentry}[4]{%
+  \node[SUBSECTION] (educationentry#1) {#2}; % Position and company/location
+  \node[CIRCLE] (educationentrycircle#1) [at={(secicon.center |- educationentry#1.west)}, anchor=center] {}; % Circle to the left of the whatwhere node
+  \node[WHEN] {#3}; % Time period
+  \node[ACCOMPLISHMENT] (educationaccomplishment#1) {#4}; % Job description
+  \draw[LINE] (educationentrycircle#1.south) -- (educationentrycircle#1.south |- educationaccomplishment#1.south);
+}
 
-\newenvironment{skillEnum}
-{%
-    \begin{itemize}[
-      nosep,
-      label={},
-      leftmargin=10pt,
-      rightmargin=0pt,
-      itemsep=2pt,
-    ]%
+% Command (mysection)
+\newcommand{\mysection}[3]{%
+  \node[SECTION] (sec) {\MakeUppercase{#3}};
+  \node[ICON] (secicon) at (sec.west) {\faIcon{#2}};
 }
-{%
-    \end{itemize}%
+
+% Command (skillsentry)
+\newcommand{\skillsentry}[2]{%
+  \node[SUBSECTION] (subsec#1) {#1};
+  \node[ACCOMPLISHMENT] (subsecaccomplishment#1) {#2}; % Job description
+  \node[CIRCLE] (subseccircle#1) [at={(secicon.center |- subsec#1.west)}, anchor=center] {}; % Circle centered below secicon
+  \draw[LINE] (subseccircle#1.south) -- (subseccircle#1.south |- subsecaccomplishment#1.south);
 }
-\NewDocumentCommand{\skills}{m O{} m}{%
-  \item #1\ifx#2\empty\else\textbf{#2 }\fi#3
+
+% Command (profile)
+\newcommand{\profile}[1]{%
+  \node[PROFILE](profile) {#1};
+  \node[CIRCLE] (profilecircle) [at={(secicon.center |- profile.north)}, anchor=north] {};
+  \draw[LINE] (profilecircle.south) -- (profilecircle.south |- profile.south);
 }
-\newcommand{\beginner}{%
-    \tikz{
-      \filldraw[gray!30] (0,0) circle (.5ex);%
-      \filldraw[gray!30] (1.5ex,0) circle (.5ex);%
-      \filldraw[PRIMARY] (3ex,0) circle (.5ex);%
-    }
-}
-\newcommand{\intermediate}{%
-  \tikz{
-    \filldraw[gray!30] (0,0) circle (.5ex);%
-    \filldraw[PRIMARY] (1.5ex,0) circle (.5ex);%
-    \filldraw[PRIMARY] (3ex,0) circle (.5ex);%
-  }
-}
-\newcommand{\expert}{%
-  \tikz{
-    \filldraw[PRIMARY] (0,0) circle (.5ex);%
-    \filldraw[PRIMARY] (1.5ex,0) circle (.5ex);%
-    \filldraw[PRIMARY] (3ex,0) circle (.5ex);%
-  }
+
+% Command (my header)
+\newcommand{\myheader}{
+  \node[HEADERPRIMARY] (headername) {\MakeUppercase{\@firstname\space\@lastname}};
+  \node[HEADERLINESECONDARY, yshift=-\my@smallskip] (headerlinecontact) {
+    \ifdef{\@address}{\@address}{}
+    \ifdef{\@mobile}{\\\@mobile}{}
+    \ifdef{\@mail}{\\\href{mailto://\@mail}{\@mail}}{}
+    \ifdef{\@linkedinaccount}{\\\faLinkedin\ \texttt{\href{https://linkedin.com\@linkedinaccount}{\@linkedinaccount}}}{}
+    \ifdef{\@githubaccount}{\\\faGithub\ \texttt{\href{https://github.com\@githubaccount}{\@githubaccount}}}{}
+  };
+  \ifdef{\@profilepicture}{
+    \path let \p1 = (headername.north), \p2 = (headerlinecontact.south) in
+    \pgfextra{\xdef\verticaldistance{\y1-\y2}};
+    \node[PROFILEPICTURE, anchor=north east] (profilepicture) at (current bounding box.north east) {\includegraphics[height=\verticaldistance]{\@profilepicture}};
+    % \draw[thick, rounded corners=5pt, line width=2pt, draw=PRIMARY] (profilepicture.north west) rectangle (profilepicture.south east);
+  }{}
 }
